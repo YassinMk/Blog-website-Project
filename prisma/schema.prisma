@@ -11,48 +11,43 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  nom       String
-  email     String   @unique
-  password  String
-  role      Role     @default(AUTHOR)
-
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  nom      String
+  password String
+  role     Role      @default(AUTHOR)
   articles Article[]
-}
-
-//enum role author and user
-enum Role {
-  USER
-  AUTHOR
 }
 
 model Article {
-  id        Int      @id @default(autoincrement())
-  titre     String
-  contenu   String
-  image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  published Boolean  @default(false)
-
-  author     User       @relation(fields: [authorId], references: [id])
-  authorId   Int
-  categories Category[]
-
-  comments Comment[]
+  id          Int           @id @default(autoincrement())
+  titre       String
+  contenu     String
+  image       String
+  published   Boolean
+  author      User          @relation(fields: [userId], references: [id])
+  userId      Int
+  categories  Category[]
+  commentaire Commentaire[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
 model Category {
-  id       Int       @id @default(autoincrement())
-  nom      String    @unique
-  articles Article[]
+  id      Int       @id @default(autoincrement())
+  name    String
+  article Article[]
 }
 
-model Comment {
-  id     Int    @id @default(autoincrement())
-  email  String
-  contenu String
+model Commentaire {
+  id        Int      @id @default(autoincrement())
+  email     String
+  contenu   String
+  article   Article? @relation(fields: [articleId], references: [id])
+  articleId Int?
+}
 
-  article   Article @relation(fields: [articleId], references: [id])
-  articleId Int
+enum Role {
+  AUTHOR
+  ADMIN
 }
