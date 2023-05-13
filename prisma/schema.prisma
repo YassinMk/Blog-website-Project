@@ -9,52 +9,50 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
 model User {
   id        Int      @id @default(autoincrement())
   nom       String
   email     String   @unique
   password  String
-   role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      Role     @default(AUTHOR)
 
-  articles   Article[]
+  articles Article[]
 }
+
 //enum role author and user
 enum Role {
   USER
   AUTHOR
 }
+
 model Article {
-  id         Int        @id @default(autoincrement())
-  titre      String
-  contenu    String
-  image      String?
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  published  Boolean    @default(false)
+  id        Int      @id @default(autoincrement())
+  titre     String
+  contenu   String
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  published Boolean  @default(false)
 
   author     User       @relation(fields: [authorId], references: [id])
   authorId   Int
   categories Category[]
 
-  comments   Comment[]
+  comments Comment[]
 }
 
 model Category {
-  id         Int        @id @default(autoincrement())
-  nom        String     @unique
-  articles   Article[]
+  id       Int       @id @default(autoincrement())
+  nom      String    @unique
+  articles Article[]
 }
 
 model Comment {
-  id         Int      @id @default(autoincrement())
-  email      String
-  conten     String
+  id     Int    @id @default(autoincrement())
+  email  String
+  contenu String
 
-  article    Article  @relation(fields: [articleId], references: [id])
-  articleId  Int
-
-  
-  userId     Int
+  article   Article @relation(fields: [articleId], references: [id])
+  articleId Int
 }
