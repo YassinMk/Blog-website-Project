@@ -1,0 +1,31 @@
+###
+GET http://localhost:3001/users/2
+
+
+###
+PUT http://localhost:3000/users/1
+Content-Type: application/json
+
+{
+  "nom": "John Doe",
+  "email": "johndoe@example.com",
+  "password": "newpassword",
+  "role": "ADMIN"
+}
+
+
+###
+
+DELETE http://localhost:3001/users/12
+
+###
+
+POST http://localhost:3001/users
+Content-Type: application/json
+
+{
+  "nom": "John Doe",
+  "email": "johndoe@example.com",
+  "password": "password123",
+  "role": "AUTHOR"
+}

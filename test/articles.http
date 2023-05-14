@@ -1,0 +1,37 @@
+### Créer un nouvel article ###
+
+POST http://localhost:3001/articles
+Content-Type: application/json
+
+{
+  "titre": "Nouvel article",
+  "contenu": "Contenu de l'article",
+  "image": "url-de-l-image",
+  "authorId": 1,
+  "categoryIds": [1, 2]
+}
+
+### Obtenir tous les articles ###
+
+GET http://localhost:3001/articles
+
+### Obtenir un article par ID ###
+
+GET http://localhost:3001/articles/2
+
+### Mettre à jour un article ###
+
+PUT http://localhost:3001/articles/1
+Content-Type: application/json
+
+{
+  "titre": "Article mis à jour",
+  "contenu": "Contenu mis à jour",
+  "image": "nouvelle-url-de-l-image",
+  "authorId": 2,
+  "categoryIds": [2, 3]
+}
+
+### Supprimer un article ###
+
+DELETE http://localhost:3001/articles/5

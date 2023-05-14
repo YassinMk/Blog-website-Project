@@ -1,0 +1,29 @@
+###
+POST http://localhost:3001/commentaires
+Content-Type: application/json
+
+{
+  "email": "johndoe@example.com",
+  "contenu": "Super article !",
+  "articleId": 1
+}
+###
+
+GET http://localhost:3001/commentaires
+
+###
+GET http://localhost:3001/commentaires/2
+
+### Mettre à jour un commentaire ###
+PUT http://localhost:3000/commentaires/2
+Content-Type: application/json
+
+{
+  "email": "janedoe@example.com",
+  "contenu": "Excellent article !"
+}
+
+###
+DELETE http://localhost:3001/commentaires/1
+
+

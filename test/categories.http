@@ -1,0 +1,38 @@
+### Créer une nouvelle catégorie ###
+
+POST http://localhost:3001/categories
+Content-Type: application/json
+
+{
+  "nom": "Technologie"
+}
+
+###
+
+### Obtenir toutes les catégories ###
+
+GET http://localhost:3001/categories
+
+###
+
+### Obtenir une catégorie par ID ###
+
+GET http://localhost:3001/categories/2
+
+###
+
+### Mettre à jour une catégorie ###
+
+PUT http://localhost:3001/categories/1
+Content-Type: application/json
+
+{
+  "nom": "Informatique"
+}
+
+###
+
+### Supprimer une catégorie ###
+
+DELETE http://localhost:3001/categories/1
+
