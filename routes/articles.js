@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 // Create a new article
 router.post('/', async (req, res) => {
   try {
-    const { titre, contenu, image, authorId, categoryIds } = req.body;
+    const { titre, contenu, image, authorId, categoryIds ,published} = req.body;
 
     const article = await prisma.article.create({
       data: {
@@ -15,6 +15,7 @@ router.post('/', async (req, res) => {
         contenu,
         image,
         authorId: parseInt(authorId),
+        published:true,
         categories: {
           connect: categoryIds.map((categoryId) => ({
             id: parseInt(categoryId),
@@ -24,6 +25,7 @@ router.post('/', async (req, res) => {
       include: {
         author: true,
         categories: true,
+        
       },
     });
 
@@ -34,77 +36,33 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Get all articles
-// Get all articles
-router.get('/', async (req, res) => {
+
+// GET /articles?take=10&skip=0
+router.get("/", async (req, res) => {
+  const take = Number(req.query.take) || 10;
+  const skip = Number(req.query.skip) || 0;
   try {
     const articles = await prisma.article.findMany({
-      include: {
-        author: true,
-        categories: {
-          select: { id: true },
-        },
-      },
+      take,
+      skip,
+      include:{
+        author:{
+          select:{
+            nom:true,
+            email:true,
+            role:true
+          }
+        }
+      }
     });
-
-    const formattedArticles = articles.map(article => {
-      const { id, titre, contenu, image, author, categories } = article;
-      const categoryIds = categories.map(category => category.id);
-
-      return {
-        id,
-        titre,
-        contenu,
-        image,
-        author,
-        categoryIds,
-      };
-    });
-
-    res.json(formattedArticles);
+    res.send(articles);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to retrieve articles' });
-  }
+    res.status(500).send("Error retrieving articles from the database");
+}
 });
 
-// Get an article by ID
-router.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
 
-    const article = await prisma.article.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        author: true,
-        categories: {
-          select: { id: true },
-        },
-      },
-    });
-
-    if (!article) {
-      return res.status(404).json({ error: 'Article not found' });
-    }
-
-    const { titre, contenu, image, author, categories } = article;
-    const categoryIds = categories.map(category => category.id);
-
-    const formattedArticle = {
-      id: parseInt(id),
-      titre,
-      contenu,
-      image,
-      author,
-      categoryIds,
-    };
-
-    res.json(formattedArticle);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to retrieve article' });
-  }
-});
 
 // Get an article by ID
 router.get('/:id', async (req, res) => {
