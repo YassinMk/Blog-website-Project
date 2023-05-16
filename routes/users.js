@@ -8,7 +8,12 @@ const prisma = new PrismaClient();
 router.get('/', async (req, res) => {
   try {
     // Retrieve all users from the database using Prisma
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({select: {
+      id: true,
+      nom: true,
+      email: true,
+      role : true
+    }});
 
     res.json(users);
   } catch (error) {
@@ -24,6 +29,12 @@ router.get('/:id', async (req, res) => {
     // Retrieve the user from the database using Prisma
     const user = await prisma.user.findUnique({
       where: { id: parseInt(id) },
+      select: {
+        id: true,
+        nom: true,
+        email: true,
+        role : true
+      }
     });
     console.log(user,"hellowww");
     if (!user) {

@@ -30,7 +30,6 @@ router.post('/', async (req, res) => {
 });
 
 // Get all comments
-// Get all comments
 router.get('/', async (req, res) => {
   try {
     const comments = await prisma.commentaire.findMany({
