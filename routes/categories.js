@@ -7,11 +7,11 @@ const prisma = new PrismaClient();
 // Create a new category
 router.post('/', async (req, res) => {
   try {
-    const { nom } = req.body;
+    const { name} = req.body;
 
     const category = await prisma.category.create({
       data: {
-        nom,
+        name
       },
     });
 
@@ -25,7 +25,13 @@ router.post('/', async (req, res) => {
 // Get all categories
 router.get('/', async (req, res) => {
   try {
-    const categories = await prisma.category.findMany();
+    const take = Number(req.query.take) || 10;
+    const skip = Number(req.query.skip) || 0;
+    const categories = await prisma.category.findMany({
+      take, 
+      skip
+    });
+
 
     res.json(categories);
   } catch (error) {
@@ -41,6 +47,8 @@ router.get('/:id', async (req, res) => {
 
     const category = await prisma.category.findUnique({
       where: { id: parseInt(id) },
+      take,
+      skip
     });
 
     if (!category) {
@@ -58,12 +66,12 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { nom } = req.body;
+    const { name } = req.body;
 
     const category = await prisma.category.update({
       where: { id: parseInt(id) },
       data: {
-        nom,
+        name,
       },
     });
 

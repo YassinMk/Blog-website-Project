@@ -30,46 +30,40 @@ router.post('/', async (req, res) => {
 });
 
 // Get all comments
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
+  const take = Number(req.query.take) || 10;
+  const skip = Number(req.query.skip) || 0;
   try {
-    const comments = await prisma.commentaire.findMany({
+    const commentaires = await prisma.commentaire.findMany({
+      take,
+      skip,
       include: {
         article: {
-          include: {
-            author: true,
+          select: {
+            titre: true,
+            contenu: true,
+            image: true,
+            createdAt: true,
+            updatedAt: true,
+            published: true,
+            userId: true,
           },
         },
       },
     });
-
-    const commentsWithAuthor = comments.map(comment => {
-      const { id, email, contenu, article } = comment;
-      const { id: articleId, titre, contenu: articleContenu, author } = article;
-
-      return {
-        id,
-        email,
-        contenu,
-        article: {
-          id: articleId,
-          titre,
-          contenu: articleContenu,
-          author,
-        },
-      };
-    });
-
-    res.json(commentsWithAuthor);
+    res.send(commentaires);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to retrieve comments' });
-  }
+    res.status(500).send("Error retrieving commentaires from the database");
+  }
 });
 
 // Get a comment by ID
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    const take = Number(req.query.take) || 10;
+    const skip = Number(req.query.skip) || 0;
 
     const comment = await prisma.commentaire.findUnique({
       where: { id: parseInt(id) },
@@ -93,6 +87,8 @@ router.get('/:id', async (req, res) => {
       id: parseInt(id),
       email,
       contenu,
+      take,
+      skip,
       article: {
         id: articleId,
         titre,
@@ -107,7 +103,6 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve comment' });
   }
 });
-// Update a comment
 
 // Update a comment
 router.put('/:id', async (req, res) => {

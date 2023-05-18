@@ -3,21 +3,12 @@ POST http://localhost:3001/auth/register
 Content-Type: application/json
 
 {
-  "email": "koko1@example.com",
+  "email": "ko1@example.com",
   "password": "password123",
   "nom": "John Doe"
 }
 ###
-POST http://localhost:3001/auth/register
-Content-Type: application/json
 
-{
-  "email": "koko3@example.com",
-  "password": "password123",
-  "nom": "John Doe"
-}
-
-###
 POST http://localhost:3001/auth/login
 Content-Type: application/json
 

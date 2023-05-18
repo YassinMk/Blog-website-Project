@@ -8,7 +8,12 @@ const prisma = new PrismaClient();
 router.get('/', async (req, res) => {
   try {
     // Retrieve all users from the database using Prisma
-    const users = await prisma.user.findMany({select: {
+    const take = Number(req.query.take) || 10;
+      const skip = Number(req.query.skip) || 0;
+    const users = await prisma.user.findMany({
+      take,
+      skip,
+      select: {
       id: true,
       nom: true,
       email: true,

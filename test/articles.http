@@ -2,13 +2,13 @@
 
 POST http://localhost:3001/articles
 Content-Type: application/json
+Authorization: 
 
 {
-  "titre": "Nouvel article",
-  "contenu": "Contenu de l'article",
-  "image": "url-de-l-image",
-  "authorId": 1,
-  "categoryIds": [1, 2]
+  "titre": "Article mis à jour",
+  "contenu": "Contenu mis à jour",
+  "image": "nouvelle-url-de-l-image",
+  "categories":[{ "id":1 },{ "id":2 }]
 }
 
 ### Obtenir tous les articles ###

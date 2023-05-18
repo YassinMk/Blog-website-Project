@@ -1,41 +1,7 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { PrismaClient } = require('@prisma/client');
-
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-
-// Create a new article
-router.post('/', async (req, res) => {
-  try {
-    const { titre, contenu, image, authorId, categoryIds ,published} = req.body;
-
-    const article = await prisma.article.create({
-      data: {
-        titre,
-        contenu,
-        image,
-        authorId: parseInt(authorId),
-        published:true,
-        categories: {
-          connect: categoryIds.map((categoryId) => ({
-            id: parseInt(categoryId),
-          })),
-        },
-      },
-      include: {
-        author: true,
-        categories: true,
-        
-      },
-    });
-
-    res.json(article);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to create article' });
-  }
-});
-
 
 // GET /articles?take=10&skip=0
 router.get("/", async (req, res) => {
@@ -45,97 +11,109 @@ router.get("/", async (req, res) => {
     const articles = await prisma.article.findMany({
       take,
       skip,
-      include:{
-        author:{
-          select:{
-            nom:true,
-            email:true,
-            role:true
-          }
-        }
-      }
+      include: {
+        author: {
+          select: {
+            nom: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
     });
     res.send(articles);
   } catch (error) {
     console.error(error);
     res.status(500).send("Error retrieving articles from the database");
-}
-});
-
-
-
-// Get an article by ID
-router.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const article = await prisma.article.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        author: true,
-        categories: true,
-      },
-    });
-
-    if (!article) {
-      return res.status(404).json({ error: 'Article not found' });
-    }
-
-    res.json(article);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to retrieve article' });
   }
 });
 
-// Update an article
-router.patch('/:id', async (req, res) => {
+// GET /articles/123
+router.get("/:id", async (req, res) => {
+  const id = Number(req.params.id);
   try {
-    const { id } = req.params;
-    const { titre, contenu, image, authorId, categoryIds } = req.body;
+    const article = await prisma.article.findUnique({
+      where: { id },
+      include: {
+        author: {
+          select: {
+            nom: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+    });
+    if (article) {
+      res.send(article);
+    } else {
+      res.status(404).send("Article not found");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error retrieving article from the database");
+  }
+});
 
-    const article = await prisma.article.update({
-      where: { id: parseInt(id) },
+// POST /articles
+router.post("/" ,async (req, res) => {
+  const { titre, contenu, image, categories } = req.body;
+  const { user } = req; // Access the authenticated user
+  try {
+    const newArticle = await prisma.article.create({
       data: {
         titre,
         contenu,
         image,
-        authorId: parseInt(authorId),
-        categories: {
-          set: categoryIds.map((categoryId) => ({
-            id: parseInt(categoryId),
-          })),
-        },
-      },
-      include: {
-        author: true,
-        categories: true,
+        author: { connect: { id: user.user_id } },
+        categories: { connect:categories },
+        published:true
       },
     });
 
-    res.json(article);
+    res.send(newArticle);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to update article' });
+    res.status(500).send("Error creating new article");
   }
 });
 
+// PATCH /articles/123
+router.patch("/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const { titre, contenu, image, categories } = req.body;
+  const { user } = req; // Access the authenticated user
 
-// Delete an article
-router.delete('/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-
-    await prisma.article.delete({
-      where: { id: parseInt(id) },
+    const updatedArticle = await prisma.article.update({
+      where: { id },
+      data: {
+        titre,
+        contenu,
+        image,
+        author: { connect: { id: user.user_id } },
+        categories: { set: categories },
+      },
     });
-
-    res.json({ message: 'Article deleted successfully' });
+    res.send(updatedArticle);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to delete article' });
+    res.status(500).send("Error updating article");
   }
 });
-  module.exports = router;
-  
 
+// DELETE /articles/123
+router.delete("/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  try {
+    await prisma.article.delete({
+      where: { id },
+    });
+    res.send(`Article with id ${id} deleted`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error deleting article");
+  }
+});
+
+module.exports = router;

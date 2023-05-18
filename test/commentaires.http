@@ -15,15 +15,16 @@ GET http://localhost:3001/commentaires
 GET http://localhost:3001/commentaires/2
 
 ### Mettre à jour un commentaire ###
-PUT http://localhost:3000/commentaires/2
+PUT http://localhost:3001/commentaires/4
 Content-Type: application/json
 
 {
+  "articleId":3,
   "email": "janedoe@example.com",
   "contenu": "Excellent article !"
 }
 
 ###
-DELETE http://localhost:3001/commentaires/1
+DELETE http://localhost:3001/commentaires/5
 
 
