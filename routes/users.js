@@ -85,19 +85,33 @@ router.post('/', async (req, res) => {
 // Route handler for deleting a user
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
-
   try {
+    // Retrieve the user's articles before deletion
+    const deletedArticles = await prisma.article.findMany({
+      where: { userId: parseInt(id) },
+    });
+
+    // Delete the user's articles
+    await prisma.article.deleteMany({
+      where: { userId: parseInt(id) },
+    });
+
     // Delete the user from the database using Prisma
     const deletedUser = await prisma.user.delete({
       where: { id: parseInt(id) },
     });
 
-    res.json(deletedUser);
+    res.json({
+      deletedUser,
+      deletedArticles,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to delete the user.' });
+    res.status(500).json({ error: 'Failed to delete the user and their articles.' });
   }
 });
+
+
 
 // Route handler for updating a user
 router.put('/:id', async (req, res) => {

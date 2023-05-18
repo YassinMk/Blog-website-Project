@@ -34,4 +34,4 @@ Content-Type: application/json
 
 ### Supprimer un article ###
 
-DELETE http://localhost:3001/articles/5
+DELETE http://localhost:3001/articles/14

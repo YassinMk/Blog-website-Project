@@ -106,14 +106,28 @@ router.patch("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   const id = Number(req.params.id);
   try {
+    // Retrieve the commentaries associated with the article
+    const deletedCommentaries = await prisma.commentaire.findMany({
+      where: { articleId: id },
+    });
+
+    // Delete the commentaries
+    await prisma.commentaire.deleteMany({
+      where: { articleId: id },
+    });
+
+    // Delete the article
     await prisma.article.delete({
       where: { id },
     });
-    res.send(`Article with id ${id} deleted`);
+
+    res.json({
+      deletedCommentaries,
+      message: `Article with id ${id} and associated commentaries deleted`,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error deleting article");
+    res.status(500).send("Error deleting article and associated commentaries");
   }
 });
-
 module.exports = router;
