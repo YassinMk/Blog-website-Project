@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
+const { verifyToken } = require("../middleware/protection");
+
 
 const prisma = new PrismaClient();
 
 // Create a new comment
-router.post('/', async (req, res) => {
+router.post('/',verifyToken, async (req, res) => {
   try {
     const { email, contenu, articleId } = req.body;
 
@@ -105,7 +107,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update a comment
-router.put('/:id', async (req, res) => {
+router.put('/:id',verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { email, contenu, articleId } = req.body;
@@ -130,7 +132,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete a comment
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
 

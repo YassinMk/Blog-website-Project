@@ -5,7 +5,7 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-router.get('/', async (req, res) => {
+router.get('/',verifyToken, async (req, res) => {
   try {
     // Retrieve all users from the database using Prisma
     const take = Number(req.query.take) || 10;
@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id',verifyToken, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -54,7 +54,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Route handler for creating a new user
-router.post('/', async (req, res) => {
+router.post('/',verifyToken, async (req, res) => {
   try {
     const { nom, email, password, role } = req.body;
 
@@ -83,7 +83,7 @@ router.post('/', async (req, res) => {
 });
 
 // Route handler for deleting a user
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',verifyToken, async (req, res) => {
   const { id } = req.params;
   try {
     // Retrieve the user's articles before deletion
@@ -114,7 +114,7 @@ router.delete('/:id', async (req, res) => {
 
 
 // Route handler for updating a user
-router.put('/:id', async (req, res) => {
+router.put('/:id',verifyToken, async (req, res) => {
   const { id } = req.params;
   const { nom, email, password, role } = req.body;
 

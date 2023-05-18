@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const { verifyToken } = require("../middleware/protection");
+
 
 // GET /articles?take=10&skip=0
 router.get("/", async (req, res) => {
@@ -56,7 +58,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST /articles
-router.post("/" ,async (req, res) => {
+router.post("/" ,verifyToken,async (req, res) => {
   const { titre, contenu, image, categories } = req.body;
   const { user } = req; // Access the authenticated user
   try {
@@ -79,7 +81,7 @@ router.post("/" ,async (req, res) => {
 });
 
 // PATCH /articles/123
-router.patch("/:id", async (req, res) => {
+router.patch("/:id",verifyToken, async (req, res) => {
   const id = Number(req.params.id);
   const { titre, contenu, image, categories } = req.body;
   const { user } = req; // Access the authenticated user
@@ -103,7 +105,7 @@ router.patch("/:id", async (req, res) => {
 });
 
 // DELETE /articles/123
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",verifyToken, async (req, res) => {
   const id = Number(req.params.id);
   try {
     // Retrieve the commentaries associated with the article
