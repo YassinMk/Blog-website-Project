@@ -1,5 +1,5 @@
 ###
-POST http://localhost:3001/commentaires
+POST http://localhost:3000/commentaires
 Content-Type: application/json
 
 {
@@ -9,13 +9,13 @@ Content-Type: application/json
 }
 ###
 
-GET http://localhost:3001/commentaires
+GET http://localhost:3000/commentaires
 
 ###
-GET http://localhost:3001/commentaires/2
+GET http://localhost:3000/commentaires/2
 
 ### Mettre à jour un commentaire ###
-PUT http://localhost:3001/commentaires/4
+PUT http://localhost:3000/commentaires/4
 Content-Type: application/json
 
 {
@@ -25,6 +25,6 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3001/commentaires/5
+DELETE http://localhost:3000/commentaires/5
 
 

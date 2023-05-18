@@ -1,5 +1,5 @@
 ###
-GET http://localhost:3001/users/
+GET http://localhost:3000/users/
 
 
 ###
@@ -16,11 +16,11 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3001/users/4
+DELETE http://localhost:3000/users/4
 
 ###
 
-POST http://localhost:3001/users
+POST http://localhost:3000/users
 Content-Type: application/json
 
 {
