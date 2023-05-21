@@ -7,11 +7,11 @@ const { verifyToken } = require("../middleware/protection");
 
 const prisma = new PrismaClient();
 
-router.get('/',verifyToken, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     // Retrieve all users from the database using Prisma
     const take = Number(req.query.take) || 10;
-      const skip = Number(req.query.skip) || 0;
+    const skip = Number(req.query.skip) || 0;
     const users = await prisma.user.findMany({
       take,
       skip,
@@ -141,5 +141,6 @@ router.put('/:id',verifyToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to update the user.' });
   }
 });
+
 
 module.exports = router;

@@ -132,4 +132,5 @@ router.delete("/:id",verifyToken, async (req, res) => {
     res.status(500).send("Error deleting article and associated commentaries");
   }
 });
+
 module.exports = router;

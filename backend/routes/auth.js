@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const { verifyToken } = require("../middleware/protection");
 
 router.post("/login", async (req, res) => {
   try {
@@ -18,12 +19,6 @@ router.post("/login", async (req, res) => {
     // Check if user exists
     const user = await prisma.user.findUnique({
       where: { email },
-      select: {
-        id: true,
-        nom: true,
-        email: true,
-        role : true
-      }
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -32,21 +27,18 @@ router.post("/login", async (req, res) => {
     }
 
     // Create token
-    const token = jwt.sign(
-      { user_id: user.id, email },
-      process.env.TOKEN_KEY,
-      { expiresIn: "2h" }
-    );
-     // Return new user and token
-    return res.status(201).json({status : true, user: user, token : token });
-  
-  
+    const token = jwt.sign({ user_id: user.id }, process.env.TOKEN_KEY, {
+      expiresIn: "2h",
+    });
+    // Return new user and token
+
+    res.cookie("jwt", token, { httpOnly: true, maxAge: 2 * 60 * 60 });
+    res.status(201).json({ status: true, user: user, token: token });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({status : false,error :err});
+    res.status(500).json({ status: false, error: err });
   }
 });
-
 
 router.post("/register", async (req, res) => {
   try {
@@ -73,24 +65,44 @@ router.post("/register", async (req, res) => {
         nom,
         email,
         password: await bcrypt.hash(password, 10),
-        role:"AUTHOR"
+        role: "AUTHOR",
       },
     });
 
     // Create token
-    const token = jwt.sign(
-      { user_id: newUser.id, email },
-      process.env.TOKEN_KEY,
-      { expiresIn: "2h" }
-    );
-
+    // const token = jwt.sign(
+    //   { user_id: newUser.id, email },
+    //   process.env.TOKEN_KEY,
+    //   { expiresIn: "2h" }
+    // );
 
     // Return new user and token
-    return res.status(200).json({ user :{id: newUser.id , nom : newUser.nom , role : newUser.nom}, token });
+    res
+      .status(200)
+      .json({ user: { id: newUser.id, nom: newUser.nom, role: newUser.nom } });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
-module.exports=router;
+router.get("/profil", async (req, res) => {
+  try {
+    console.log("request qrri");
+    const token = req.headers.authorization;
+    console.log(process.env.TOKEN_KEY);
+    const userinfo = jwt.verify(token, process.env.TOKEN_KEY);
+    res.json(userinfo);
+  } catch (error) {
+    console.log(error);
+  }
+});
+router.post("/logout",async (req, res)=>{
+  try{
+    
+    res.json({message:"logout succesful"});
+  }catch(err){
+    console.log(err);
+  }  
+  })
+module.exports = router;
