@@ -10,14 +10,12 @@ const prisma = new PrismaClient();
 router.post('/',verifyToken, async (req, res) => {
   try {
     const { email, contenu, articleId } = req.body;
-
+    console.log(req.body);
     const comment = await prisma.commentaire.create({
       data: {
-        email,
-        contenu,
-        article: {
-          connect: { id: parseInt(articleId) },
-        },
+        email:email,
+        contenu:contenu,
+        article: { connect: { id: articleId } },
       },
       include: {
         article: true,

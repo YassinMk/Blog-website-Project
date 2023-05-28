@@ -2,48 +2,60 @@ const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const { verifyToken } = require("../middleware/protection");
+const jwt = require('jsonwebtoken');
+
 
 
 
 const prisma = new PrismaClient();
 
-router.get('/', async (req, res) => {
+router.get('/',verifyToken, async (req, res) => {
   try {
     // Retrieve all users from the database using Prisma
-    const take = Number(req.query.take) || 10;
-    const skip = Number(req.query.skip) || 0;
-    const users = await prisma.user.findMany({
-      take,
-      skip,
+    
+    // Verify the token to extract the user ID
+    const userI=req.user;
+    const userId = parseInt(userI.user_id);
+    // Fetch user data using the user ID
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
       select: {
-      id: true,
-      nom: true,
-      email: true,
-      role : true
-    }});
-
-    res.json(users);
+        id: true,
+        nom: true,
+        email: true,
+        role: true,
+      },
+    });
+    res.json(user);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to get users.' });
+    res.status(500).json({ error: 'Failed to get user.' });
   }
 });
 
 router.get('/:id',verifyToken, async (req, res) => {
-  const { id } = req.params;
 
   try {
+    const { id } = req.params;
+    const userId = parseInt(id);
+     // Check the parsed integer value
+
+
     // Retrieve the user from the database using Prisma
     const user = await prisma.user.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: userId },
       select: {
-        id: true,
+        id: {
+          id: userId
+        },
         nom: true,
         email: true,
         role : true
       }
     });
-    console.log(user,"hellowww");
+   
     if (!user) {
       return res.status(404).json({ error: 'User not found.' });
     }
@@ -141,6 +153,8 @@ router.put('/:id',verifyToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to update the user.' });
   }
 });
-
+router.get('/getUserId',verifyToken,async(req,res)=>{
+  res.json(req.user);
+})
 
 module.exports = router;

@@ -1,3 +1,37 @@
+
+
+
+
+
+
+
+
+
+
+
+
+###
+GET http://localhost:3001/commentaires/2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ###
 POST http://localhost:3001/commentaires
 Content-Type: application/json
@@ -11,8 +45,10 @@ Content-Type: application/json
 
 GET http://localhost:3001/commentaires
 
-###
-GET http://localhost:3001/commentaires/2
+
+
+
+
 
 ### Mettre à jour un commentaire ###
 PUT http://localhost:3001/commentaires/4

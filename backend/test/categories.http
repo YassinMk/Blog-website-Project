@@ -1,19 +1,52 @@
-### Créer une nouvelle catégorie ###
 
-POST http://localhost:3001/categories
-Content-Type: application/json
 
-{
-  "name": "Technologie"
-}
 
-###
+
+
+
+
+
+
+
+
+
 
 ### Obtenir toutes les catégories ###
 
 GET http://localhost:3001/categories
 
 ###
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### Obtenir une catégorie par ID ###
 

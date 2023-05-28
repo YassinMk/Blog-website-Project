@@ -31,7 +31,8 @@ router.get('/', async (req, res) => {
     const skip = Number(req.query.skip) || 0;
     const categories = await prisma.category.findMany({
       take, 
-      skip
+      skip,
+      include:{article:true}
     });
 
 
